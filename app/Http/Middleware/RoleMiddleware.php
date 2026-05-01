@@ -14,7 +14,7 @@ class RoleMiddleware
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle($request, Closure $next, $role)
+    public function handle(Request $request, Closure $next, string $role): Response
     {
         if (Auth::check() && Auth::user()->role === $role) {
             return $next($request);

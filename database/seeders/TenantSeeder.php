@@ -18,5 +18,7 @@ class TenantSeeder extends Seeder
                 'updated_at' => now(),
             ]
         );
+
+        Tenant::factory()->count(100)->create();
     }
 }
