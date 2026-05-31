@@ -3,9 +3,10 @@
         <a href="{{ route('admin.dashboard') }}" class="block p-2 rounded hover:bg-gray-700">
             Dashboard
         </a>
-        <a href="{{ route('admin.tenants') }}" class="block p-2 rounded hover:bg-gray-700">
+        <a href="{{ route('admin.tenants.index') . '?status=1' }}" class="block p-2 rounded hover:bg-gray-700">
             Tenants
         </a>
+        
         <a href="{{ route('logout') }}"
         onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
         class="block p-2 rounded hover:bg-gray-700">

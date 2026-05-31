@@ -20,6 +20,59 @@ class TenantsController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return view('admin.tenants', compact('tenants'));
+        return view('admin.tenants.index', compact('tenants'));
+    }
+
+    public function create()
+    {
+        return view('admin.tenants.tenant', [
+            'tenant' => null
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'is_active' => 'required|boolean',
+        ]);
+
+        Tenant::create($validated);
+
+        return redirect()
+            ->route('admin.tenants.index')
+            ->with('success', 'Tenant created successfully.');
+    }
+
+    public function status(Tenant $tenant)
+    {
+        $tenant->is_active = ! $tenant->is_active;
+        $tenant->save();
+
+        $message = $tenant->is_active ? 'Tenant activated.' : 'Tenant deactivated.';
+
+        // Preserve filters / pagination when redirecting back to the list
+        return redirect()
+            ->route('admin.tenants.index', request()->query())
+            ->with('success', $message);
+    }
+
+    public function edit(Tenant $tenant)
+    {
+        return view('admin.tenants.tenant', compact('tenant'));
+    }
+
+    public function update(Request $request, Tenant $tenant)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'is_active' => 'required|boolean',
+        ]);
+
+        $tenant->update($validated);
+
+        return redirect()
+            ->route('admin.tenants.index')
+            ->with('success', 'Tenant updated successfully.');
     }
 }

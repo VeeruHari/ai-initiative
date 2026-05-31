@@ -19,6 +19,6 @@ class TenantSeeder extends Seeder
             ]
         );
 
-        Tenant::factory()->count(100)->create();
+        Tenant::factory()->count(30)->create();
     }
 }

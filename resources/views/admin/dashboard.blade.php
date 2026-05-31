@@ -2,7 +2,7 @@
     <!-- MAIN CONTENT -->
     <div class="flex">
         <!-- LEFT SIDEBAR -->
-        @include('partials.sidebar')
+        @include('partials.admin-sidebar')
 
         <!-- RIGHT CONTENT -->
         <div class="flex-1 p-6 bg-gray-100 min-h-screen">
