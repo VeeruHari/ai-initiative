@@ -9,6 +9,7 @@ use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Password;
 
 class UsersController extends Controller
 {
@@ -69,6 +70,10 @@ class UsersController extends Controller
             'password' => Hash::make($password),
             'is_active' => $validated['is_active'],
             'tenant_id' => $tenant->id,
+        ]);
+
+        Password::sendResetLink([
+            'email' => $validated['email']
         ]);
 
         return redirect()

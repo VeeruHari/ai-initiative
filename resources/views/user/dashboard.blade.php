@@ -9,7 +9,7 @@
             <div class="bg-white p-6 rounded shadow">
                 <h3 class="text-lg font-bold mb-4">Welcome, {{ auth()->user()->name }}</h3>
 
-                <p>This is your admin panel content area.</p>
+                <p>This is your user panel content area.</p>
             </div>
         </div>
     </div>
