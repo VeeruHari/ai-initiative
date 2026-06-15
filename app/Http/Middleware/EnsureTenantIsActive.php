@@ -18,7 +18,7 @@ class EnsureTenantIsActive
     {
          $user = Auth::user();
 
-        if ($user && ! $user->tenant?->is_active) {
+        if ($user->tenant && ! $user->tenant->is_active) {
             Auth::logout();
 
             return redirect()
