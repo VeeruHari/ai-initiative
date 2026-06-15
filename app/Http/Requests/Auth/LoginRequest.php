@@ -61,8 +61,31 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $this->isActiveTenant();
+
         RateLimiter::clear($this->throttleKey());
     }
+
+    /**
+     * Ensure the Tenant is active.
+     *
+     * @throws ValidationException
+     */
+    public function isActiveTenant(): void
+    {
+        $user = Auth::user();
+
+        if ($user->tenant && ! $user->tenant->is_active) {
+
+            Auth::logout();
+
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Your organization account is inactive.',
+            ]);
+        }
+    }   
 
     /**
      * Ensure the login request is not rate limited.

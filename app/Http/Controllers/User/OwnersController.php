@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Tenant;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use App\Models\Tenant;
+use App\Models\User;
 
-class UsersController extends Controller
+class OwnersController extends Controller
 {
     protected UserService $userService;
 
@@ -20,10 +21,10 @@ class UsersController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function list(Request $request)
     {
-        $tenantId = $request->tenant;
-        
+        $tenantId = Auth::user()->tenant_id;
+
         $tenant = Tenant::findOrFail($tenantId);
 
         $search = trim((string) $request->query('search', ''));
@@ -31,24 +32,24 @@ class UsersController extends Controller
 
         $users = $this->userService->getUsers($tenantId, $search, $status);
 
-        return view('admin.users.index', compact('users', 'tenantId', 'tenant'));
+        return view('users.index', compact('users', 'tenantId', 'tenant'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Tenant $tenant)
+    public function create()
     {
-        return view('admin.users.user', [
+        return view('users.user', [
             'user' => null,
-            'tenant' => $tenant,
+            'tenant' => Auth::user()->tenant_id,
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Tenant $tenant)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -59,13 +60,13 @@ class UsersController extends Controller
         $this->userService->createUser([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'is_active' => $validated['is_active'],
-            'is_owner' => true,
-            'tenant_id' => $tenant->id,
+            'is_active' => false,
+            'is_owner' => false,
+            'tenant_id' => Auth::user()->tenant_id,
         ]);
 
         return redirect()
-            ->route('admin.users.index', $request->tenant)
+            ->route('users.users-list')
             ->with('success', 'User created successfully.');
     }
 
@@ -80,25 +81,26 @@ class UsersController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Tenant $tenant, User $user)
+    public function edit(string $id)
     {
-        return view('admin.users.user', compact('tenant', 'user'));
+        $user = User::where('tenant_id', Auth::user()->tenant_id)->findOrFail($id);
+        return view('users.user', compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Tenant $tenant, User $user)
+    public function update(Request $request, User $user)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'is_active' => 'required|boolean',
         ]);
 
-        $this->userService->updateUser($user, $validated);
+        $user->update($validated);
 
         return redirect()
-            ->route('admin.users.index', $tenant->id)
+            ->route('users.users-list')
             ->with('success', 'User updated successfully.');
     }
 

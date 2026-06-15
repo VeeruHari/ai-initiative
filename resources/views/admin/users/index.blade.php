@@ -30,6 +30,12 @@
                         placeholder="Search name"
                         class="border rounded px-3 py-2">
 
+                    <select name="status" class="border rounded px-10 py-2">
+                        <option value="">All Status</option>
+                        <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Active</option>
+                        <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Inactive</option>
+                    </select>
+
                     <button class="bg-blue-600 text-white px-4 rounded">Filter</button>
 
                     <a href="{{ route('admin.users.index', ['tenant' => $tenantId]) }}" class="bg-gray-300 px-4 rounded">Reset</a>

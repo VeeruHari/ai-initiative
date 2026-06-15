@@ -6,6 +6,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\TenantsController;
 use App\Http\Controllers\Admin\UsersController;
 
+use App\Http\Controllers\User\OwnersController;
+
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -14,7 +16,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'tenant_is_active'])->group(function () {
     // Generic dashboard (entry point)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -41,8 +43,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/tenants/{tenant}/users/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
     });
 
-    Route::middleware('role:user')->prefix('user')->as('user.')->group(function () {
+    Route::middleware('role:user')->prefix('user')->as('users.')->group(function () {
         Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+
+        Route::middleware('is_owner')->group(function () {
+            Route::controller(OwnersController::class)->group(function () {
+                Route::get('/users-list', 'list')->name('users-list');
+                Route::get('/create', 'create')->name('create');
+                Route::post('/users', 'store')->name('store');
+                Route::get('/users/{user}/edit', 'edit')->name('edit');
+                Route::put('/users/{user}', 'update')->name('update');
+            });
+        });
     });
 });
 

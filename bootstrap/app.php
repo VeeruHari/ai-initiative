@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
+            'tenant_is_active' => \App\Http\Middleware\EnsureTenantIsActive::class,
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'is_owner' => \App\Http\Middleware\EnsureUserIsOwner::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

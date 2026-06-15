@@ -16,7 +16,7 @@ class DashboardController extends Controller
         }
 
         if ($user->role === 'user') {
-            return redirect()->route('user.dashboard');
+            return redirect()->route('users.dashboard');
         }
 
         abort(403); // fallback
