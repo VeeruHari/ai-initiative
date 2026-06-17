@@ -112,6 +112,16 @@ services:
             - '/dev/shm:/dev/shm'
         networks:
             - sail
+
+    frontend:
+        image: node:24
+        working_dir: /app
+        volumes:
+            - ./frontend:/app
+        ports:
+            - "5174:5173"
+        command: npm run dev -- --host
+
 networks:
     sail:
         driver: bridge
